@@ -23,8 +23,8 @@ class User < ApplicationRecord
 
     args = {
       customer: stripe_id,
-      #items: [{price: plan.stripe_price_id}],
-      items: [{ plan: plan }],
+      items: [{price: plan.stripe_price_id}],
+      #items: [{ plan: plan }],
       expand: ['latest_invoice.payment_intent'],
       off_session: true,
     }.merge(options)
@@ -35,7 +35,7 @@ class User < ApplicationRecord
 
     subscription = subscriptions.create(
       stripe_id: sub.id,
-      stripe_plan: plan,
+      stripe_plan: plan.stripe_id,
       status: sub.status,
       trial_ends_at: (sub.trial_end ? Time.at(sub.trial_end) : nil),
       ends_at: nil,

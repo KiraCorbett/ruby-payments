@@ -57,11 +57,9 @@ function setupStripe() {
       }
     }
 
-    //Complete a payment Intent
-
-    //Updating a card or subscribing with a trial (using a SetupIntent)
-
-    //Subscribing with no trial 
+    // complete payment intent
+    // updating a card or subscribe with a trial (using SetupIntent)
+    // subscribe with no trial 
     data.payment_method_data.type = 'card'
     stripe.createPaymentMethod(data.payment_method_data).then((result) => {
       if (result.error) {
