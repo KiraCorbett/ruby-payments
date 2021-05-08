@@ -12,7 +12,7 @@ class SubscriptionsController < ApplicationController
     current_user.subscribe(@plan)
     redirect_to root_path, notice: "Thanks for subscribing"
   rescue PaymentIncomplete => e
-    redirect_to payment_path(e.payment_intent.id)
+    redirect_to payment_path(e.payment_intent.id), alert: "Our payment provider requires additional authentication to create your subscription."
   end
 
   private

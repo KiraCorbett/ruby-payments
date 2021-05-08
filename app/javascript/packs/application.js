@@ -44,6 +44,21 @@ function setupStripe() {
   })
 
   const form = document.querySelector("#payment-form")
+  let paymentIntentId = form.dataset.paymentIntent
+
+  if (paymentIntentId) {
+    if (form.dataset.status == "requires_action") {
+      stripe.confirmCardPayment(paymentIntentId, { setup_future_usage: 'off_session' }).then((result) => {
+        if (result.error) {
+          displayError.textContent = result.error.message
+          form.querySelector("#card-details").classList.remove("d-none")
+        } else {
+          form.submit()
+        }
+      })
+    }
+  }
+
   form.addEventListener('submit', (event) => {
     event.preventDefault()
 
@@ -58,6 +73,8 @@ function setupStripe() {
     }
 
     // complete payment intent
+    
+
     // updating a card or subscribe with a trial (using SetupIntent)
     // subscribe with no trial 
     data.payment_method_data.type = 'card'
