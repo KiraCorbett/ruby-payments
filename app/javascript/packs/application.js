@@ -73,19 +73,33 @@ function setupStripe() {
     }
 
     // complete payment intent
-    
+    if (paymentIntentId) {
+      stripe.confirmCardPayment(paymentIntentId, {
+        payment_method: data.payment_method_data,
+        setup_future_usage: 'off_session',
+        save_payment_method: true,
+      }).then((result) => {
+        if (result.error) {
+          displayError.textContent = result.error.message
+          form.querySelector("#card-details").classList.remove("d-none")
+        } else {
+          form.submit()
+        }
+      })
+    } else {
 
-    // updating a card or subscribe with a trial (using SetupIntent)
-    // subscribe with no trial 
-    data.payment_method_data.type = 'card'
-    stripe.createPaymentMethod(data.payment_method_data).then((result) => {
-      if (result.error) {
-        displayError.textContent = result.error.message
-      } else {
-        addHiddenField(form, "payment_method_id", result.paymentMethod.id)
-        form.submit()
-      }
-    })
+      // updating a card or subscribe with a trial (using SetupIntent)
+      // subscribe with no trial 
+      data.payment_method_data.type = 'card'
+      stripe.createPaymentMethod(data.payment_method_data).then((result) => {
+        if (result.error) {
+          displayError.textContent = result.error.message
+        } else {
+          addHiddenField(form, "payment_method_id", result.paymentMethod.id)
+          form.submit()
+        }
+      })
+    }
   })
 }
 
