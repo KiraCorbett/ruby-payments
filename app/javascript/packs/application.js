@@ -45,6 +45,7 @@ function setupStripe() {
 
   const form = document.querySelector("#payment-form")
   let paymentIntentId = form.dataset.paymentIntent
+  let setupIntentId = form.dataset.setupIntent
 
   if (paymentIntentId) {
     if (form.dataset.status == "requires_action") {
@@ -86,9 +87,21 @@ function setupStripe() {
           form.submit()
         }
       })
-    } else {
 
-      // updating a card or subscribe with a trial (using SetupIntent)
+    // updating a card or subscribe with a trial (using SetupIntent)
+    } else if (setupIntentId) {
+      stripe.confirmCardSetup(setupIntentId, {
+        payment_method: data.payment_method_data
+      }).then((result) => {
+        if (result.error) {
+          displayError.textContent = result.error.message
+        } else {
+          addHiddenField(form, "payment_method_id", result.setupIntent.payment_method)
+          form.submit()
+        }
+      })
+
+    } else {
       // subscribe with no trial 
       data.payment_method_data.type = 'card'
       stripe.createPaymentMethod(data.payment_method_data).then((result) => {

@@ -4,6 +4,10 @@ class SubscriptionsController < ApplicationController
   before_action :authenticate_user! 
   before_action :set_plan, only: [:new, :create, :update]
 
+  def show
+    @subscription = current_user.subscription
+  end
+
   def new
   end
 
@@ -13,6 +17,17 @@ class SubscriptionsController < ApplicationController
     redirect_to root_path, notice: "Thanks for subscribing"
   rescue PaymentIncomplete => e
     redirect_to payment_path(e.payment_intent.id), alert: "Our payment provider requires additional authentication to create your subscription."
+  end
+
+  def edit
+    @subscription = current_user.subscription
+    @plans = Plan.all
+  end
+
+  def update
+    @subscription = current_user.subscription
+    @subscription.swap(@plan.stripe_id)
+    redirect_to subscription_path, notice: "You have successfully changed plans."
   end
 
   private
